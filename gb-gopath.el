@@ -6,33 +6,22 @@
 (defun zerok/setup-gb-gopath ()
   (interactive)
   (make-local-variable 'process-environment)
-  (let (
-        (srcPath (_zerok/get-gb-src-folder buffer-file-name))
-        )
+  (let ((srcPath (_zerok/get-gb-src-folder buffer-file-name)))
     (when srcPath
-      (let* (
-            (projectPath (string-remove-suffix "/" (file-name-directory srcPath)))
-            (vendorPath (string-remove-suffix "/" (concat projectPath "/vendor")))
-            (gopath (concat vendorPath ":" projectPath))
-            )
-        (progn
-          (message "Updating GOPATH to %s" gopath)
-          (setenv "GOPATH" gopath)
-          )
+      (let* ((projectPath (string-remove-suffix "/" (file-name-directory srcPath)))
+             (vendorPath (string-remove-suffix "/" (concat projectPath "/vendor")))
+             (gopath (concat vendorPath ":" projectPath)))
+        (message "Updating GOPATH to %s" gopath)
+        (setenv "GOPATH" gopath)
         ))))
 (add-hook 'go-mode-hook 'zerok/setup-gb-gopath)
 
 (defun _zerok/get-gb-src-folder (path)
-  (let (
-        (parent (directory-file-name (file-name-directory path)))
-        (basename (file-name-nondirectory path))
-        )
-    (if (equal "src" basename)
-        (string-remove-suffix "/" path)
-      (if (equal "/" parent)
-          nil
-        (_zerok/get-gb-src-folder parent)
-        )
-      )
-    )
-  )
+  (let ((parent (directory-file-name (file-name-directory path)))
+        (basename (file-name-nondirectory path)))
+    (cond ((equal "src" basename)
+           (string-remove-suffix "/" path))
+          ((equal "/" parent)
+           nil)
+          (t
+           (_zerok/get-gb-src-folder parent)))))
