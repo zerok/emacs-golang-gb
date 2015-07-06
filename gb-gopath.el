@@ -12,8 +12,7 @@
              (vendorPath (string-remove-suffix "/" (concat projectPath "/vendor")))
              (gopath (concat vendorPath ":" projectPath)))
         (message "Updating GOPATH to %s" gopath)
-        (setenv "GOPATH" gopath)
-        ))))
+        (setenv "GOPATH" gopath)))))
 (add-hook 'go-mode-hook 'zerok/setup-gb-gopath)
 
 (defun _zerok/get-gb-src-folder (path)
